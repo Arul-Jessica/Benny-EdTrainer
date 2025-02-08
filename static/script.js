@@ -4,14 +4,23 @@ const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
 
 sendBtn.addEventListener('click', () => {
-  const question = userInput.value.trim();
-  if (!question) return;
-
-  // Display user's message
-  chatBox.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
-  userInput.value = '';
-
-  // Simulate sending the question to the backend
-  chatBox.innerHTML += `<p><strong>Benny:</strong> I'm still learning! Can you clarify?</p>`;
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
+    const question = userInput.value.trim();
+    if (!question) return;
+  
+    // Display user's message
+    chatBox.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
+    userInput.value = '';
+  
+    // Send question to backend
+    fetch('/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Display Benny's response
+        chatBox.innerHTML += `<p><strong>Benny:</strong> ${data.answer}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+  });
